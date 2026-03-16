@@ -1,0 +1,19 @@
+﻿# Secrets — never commit
+aegis-backend/src/main/resources/application.properties
+aegis-backend/src/main/resources/application-local.properties
+
+# Build outputs
+aegis-backend/target/
+aegis-frontend/build/
+aegis-frontend/node_modules/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.class
+
+# Env files
+.env
+.env.local
+.env.production

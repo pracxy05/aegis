@@ -1,0 +1,204 @@
+.rockets-page {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.rockets-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 0%, rgba(0,100,200,0.1) 0%, transparent 60%);
+}
+
+.star-particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle infinite ease-in-out;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.5); }
+}
+
+.rockets-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 40px;
+  border-bottom: 1px solid var(--border-glow);
+  background: rgba(2,11,24,0.95);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid var(--border-glow);
+  color: var(--text-secondary);
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  transition: all 0.2s;
+}
+.back-btn:hover { color: var(--accent-cyan); border-color: var(--accent-cyan); }
+
+.rockets-title {
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  letter-spacing: 6px;
+  color: var(--accent-cyan);
+}
+
+.rockets-subtitle {
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  letter-spacing: 3px;
+  text-align: center;
+  margin-top: 4px;
+}
+
+.next-launch-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.countdown {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.countdown-label {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: var(--text-secondary);
+  letter-spacing: 2px;
+}
+
+.countdown-value {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  color: var(--accent-cyan);
+  letter-spacing: 2px;
+}
+
+.countdown.launched .countdown-value { color: var(--accent-green); }
+
+.rockets-content {
+  flex: 1;
+  padding: 30px 40px;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.launch-list { display: flex; flex-direction: column; gap: 8px; }
+
+.launch-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-glow);
+  border-radius: 8px;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  overflow: hidden;
+}
+
+.launch-card:hover, .launch-card.selected {
+  background: rgba(0, 212, 255, 0.06);
+  border-color: rgba(0, 212, 255, 0.4);
+}
+
+.launch-card-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.launch-number {
+  font-family: var(--font-mono);
+  font-size: 1.2rem;
+  font-weight: bold;
+  min-width: 36px;
+}
+
+.launch-info { flex: 1; }
+
+.launch-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.launch-meta {
+  display: flex;
+  gap: 16px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  align-items: center;
+}
+
+.status-badge {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 2px;
+  color: var(--accent-cyan);
+  background: rgba(0, 212, 255, 0.1);
+  border: 1px solid var(--accent-cyan);
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.launch-expanded { overflow: hidden; }
+
+.launch-expanded-inner {
+  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-top: 1px solid var(--border-glow);
+  margin-top: 16px;
+}
+
+.expanded-countdown { display: flex; justify-content: center; }
+
+.expanded-countdown .countdown-value {
+  font-size: 1.6rem;
+  letter-spacing: 4px;
+}
+
+.expanded-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.expanded-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 12px;
+  background: rgba(0,212,255,0.03);
+  border: 1px solid var(--border-glow);
+  border-radius: 4px;
+}

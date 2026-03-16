@@ -1,0 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;700;900&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-primary:     #010814;
+  --bg-secondary:   #020c1a;
+  --bg-panel:       rgba(2, 11, 26, 0.94);
+  --accent-cyan:    #00d4ff;
+  --accent-blue:    #0066ff;
+  --accent-green:   #00ff88;
+  --accent-red:     #ff4444;
+  --accent-orange:  #ff6600;
+  --accent-yellow:  #ffcc00;
+  --accent-purple:  #cc44ff;
+  --accent-pink:    #ff2277;
+  --text-primary:   rgba(220, 240, 255, 0.92);
+  --text-secondary: rgba(140, 180, 220, 0.55);
+  --border-glow:    rgba(0, 212, 255, 0.12);
+  --border-bright:  rgba(0, 212, 255, 0.32);
+  --font-mono:      'Share Tech Mono', 'Courier New', monospace;
+  --font-main:      'Exo 2', 'Segoe UI', sans-serif;
+}
+
+html, body, #root { width: 100%; height: 100%; overflow: hidden; }
+
+body {
+  color: var(--text-primary);
+  font-family: var(--font-main);
+  -webkit-font-smoothing: antialiased;
+  background:
+    radial-gradient(ellipse at 15% 60%, rgba(0, 40, 100, 0.35) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 20%, rgba(0, 10, 60, 0.5)  0%, transparent 50%),
+    radial-gradient(ellipse at 50% 90%, rgba(0, 20, 50, 0.3)  0%, transparent 50%),
+    #010814;
+}
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
+
+/* ── Animations ── */
+@keyframes pulse         { 0%,100%{opacity:1}    50%{opacity:0.3} }
+@keyframes pulse-fast    { 0%,100%{opacity:1}    50%{opacity:0.1} }
+@keyframes pulse-ring    { 0%{transform:scale(1);opacity:0.8} 100%{transform:scale(2.5);opacity:0} }
+@keyframes float         { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+@keyframes spin          { from{transform:rotate(0deg)}  to{transform:rotate(360deg)} }
+@keyframes spin-slow     { from{transform:rotate(0deg)}  to{transform:rotate(360deg)} }
+@keyframes spin-reverse  { from{transform:rotate(360deg)} to{transform:rotate(0deg)} }
+@keyframes scan          { 0%{top:-2px} 100%{top:100%} }
+@keyframes glow-pulse    { 0%,100%{box-shadow:0 0 8px currentColor} 50%{box-shadow:0 0 28px currentColor,0 0 56px currentColor} }
+@keyframes slide-in-right{ from{transform:translateX(40px);opacity:0} to{transform:translateX(0);opacity:1} }
+@keyframes slide-in-left { from{transform:translateX(-40px);opacity:0} to{transform:translateX(0);opacity:1} }
+@keyframes fade-up       { from{transform:translateY(16px);opacity:0} to{transform:translateY(0);opacity:1} }
+@keyframes shimmer       { 0%{background-position:-200% center} 100%{background-position:200% center} }
+@keyframes flicker       { 0%,100%{opacity:1} 92%{opacity:1} 93%{opacity:0.4} 94%{opacity:1} 97%{opacity:0.6} 98%{opacity:1} }
+@keyframes data-tick     { 0%{transform:translateY(0);opacity:1} 100%{transform:translateY(-10px);opacity:0} }
+@keyframes border-run {
+  0%   { clip-path: inset(0 100% 98% 0); }
+  25%  { clip-path: inset(0 0 98% 0); }
+  50%  { clip-path: inset(0 0 0 98%); }
+  75%  { clip-path: inset(98% 0 0 0); }
+  100% { clip-path: inset(0 100% 98% 0); }
+}
