@@ -1,67 +1,82 @@
 package com.aegis.aegis_backend.config;
 
+import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
 import java.net.URI;
 
+@Slf4j
 @Configuration
 public class DataSourceConfig {
 
-    // Render injects DATABASE_URL as postgres://user:pass@host:port/db
-    // Spring Boot needs jdbc:postgresql://host:port/db
-    // This bean auto-converts it.
-    @Value("${DATABASE_URL:#{null}}")
+    // Render injects this as postgres://user:pass@host:port/db
+    @Value("${DATABASE_URL:}")
     private String databaseUrl;
+
+    // Local dev fallback values
+    @Value("${spring.datasource.url:}")
+    private String localJdbcUrl;
+
+    @Value("${spring.datasource.username:}")
+    private String localUser;
+
+    @Value("${spring.datasource.password:}")
+    private String localPass;
 
     @Bean
     @Primary
     public DataSource dataSource() {
-        HikariDataSource ds = new HikariDataSource();
+        HikariConfig config = new HikariConfig();
+        config.setMaximumPoolSize(5);
+        config.setMinimumIdle(1);
+        config.setConnectionTimeout(30000);
+        config.setIdleTimeout(600000);
+        config.setMaxLifetime(1800000);
 
-        if (databaseUrl != null && databaseUrl.startsWith("postgres")) {
-            // Parse postgres:// or postgresql:// URL from Render
+        if (!databaseUrl.isBlank()) {
+            // ── Render PostgreSQL ──────────────────────────────────────
+            log.info("🐘 Connecting via DATABASE_URL (Render PostgreSQL)");
             try {
-                String cleanUrl = databaseUrl
+                String normalized = databaseUrl
                         .replace("postgres://", "postgresql://");
-                URI uri = URI.create(cleanUrl);
+                URI    uri  = URI.create(normalized);
+                String host = uri.getHost();
+                int    port = uri.getPort() == -1 ? 5432 : uri.getPort();
+                String db   = uri.getPath().replaceFirst("/", "");
+                String info = uri.getUserInfo();
+                String user = info.split(":")[0];
+                String pass = info.substring(info.indexOf(':') + 1); // handles : in password
 
-                String host     = uri.getHost();
-                int    port     = uri.getPort() == -1 ? 5432 : uri.getPort();
-                String db       = uri.getPath().replace("/", "");
-                String userInfo = uri.getUserInfo(); // "user:pass"
-                String user     = userInfo.split(":")[0];
-                String pass     = userInfo.split(":")[1];
-
-                ds.setJdbcUrl("jdbc:postgresql://" + host + ":" + port + "/" + db +
-                              "?sslmode=require");
-                ds.setUsername(user);
-                ds.setPassword(pass);
+                config.setDriverClassName("org.postgresql.Driver");
+                config.setJdbcUrl("jdbc:postgresql://" + host + ":" + port + "/" + db
+                                  + "?sslmode=require");
+                config.setUsername(user);
+                config.setPassword(pass);
 
             } catch (Exception e) {
-                throw new RuntimeException("Failed to parse DATABASE_URL: " + databaseUrl, e);
+                throw new RuntimeException(
+                    "❌ Failed to parse DATABASE_URL: " + databaseUrl, e);
             }
 
+        } else if (!localJdbcUrl.isBlank()) {
+            // ── Local dev (MySQL or any jdbc URL) ─────────────────────
+            log.info("🗄️  Connecting via spring.datasource.url (local dev)");
+            config.setJdbcUrl(localJdbcUrl);
+            config.setUsername(localUser);
+            config.setPassword(localPass);
+
         } else {
-            // Local dev fallback — reads normal spring.datasource.* props
-            // This branch is hit when DATABASE_URL is not set (local MySQL)
             throw new RuntimeException(
-                "DATABASE_URL env var not set. " +
-                "For local dev use application-local.properties with spring.datasource.*"
-            );
+                "❌ No database configuration found. " +
+                "Set DATABASE_URL (Render) or spring.datasource.url (local).");
         }
 
-        ds.setDriverClassName("org.postgresql.Driver");
-        ds.setMaximumPoolSize(5);      // Stay within Render free tier limits
-        ds.setMinimumIdle(1);
-        ds.setConnectionTimeout(30000);
-        ds.setIdleTimeout(600000);
-        ds.setMaxLifetime(1800000);
-        return ds;
+        return new HikariDataSource(config);
     }
 }
