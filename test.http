@@ -1,0 +1,26 @@
+### Register
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "praharsh",
+  "password": "aegis123"
+}
+
+###  Login
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "praharsh",
+  "password": "aegis123"
+}
+
+### Get All Events
+GET http://localhost:8080/api/events
+
+### Get Earthquakes only
+GET http://localhost:8080/api/events/type/EARTHQUAKE
+
+### Get HIGH severity
+GET http://localhost:8080/api/events/severity/HIGH
