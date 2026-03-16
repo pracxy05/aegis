@@ -1,5 +1,4 @@
-﻿# Secrets — never commit
-aegis-backend/src/main/resources/application.properties
+# Secrets � never commit
 aegis-backend/src/main/resources/application-local.properties
 
 # Build outputs
