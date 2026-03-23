@@ -15,7 +15,9 @@ import java.net.URI;
 @Configuration
 public class DataSourceConfig {
 
-    @Value("${DATABASE_URL:}")
+    // Reads OS environment variable DATABASE_URL directly (Render injects this)
+    // Empty string default means it's optional — local dev won't have it
+    @Value("#{systemEnvironment['DATABASE_URL'] ?: ''}")
     private String renderUrl;
 
     @Value("${spring.datasource.url:}")
@@ -37,9 +39,9 @@ public class DataSourceConfig {
         cfg.setIdleTimeout(600000);
         cfg.setMaxLifetime(1800000);
 
-        if (!renderUrl.isBlank() && renderUrl.startsWith("postgres")) {
+        if (renderUrl != null && !renderUrl.isBlank() && renderUrl.startsWith("postgres")) {
             // ── Render PostgreSQL ────────────────────────────────────
-            log.info("🐘 RENDER mode — connecting via DATABASE_URL");
+            log.info("🐘 RENDER mode — PostgreSQL via DATABASE_URL");
             try {
                 URI    uri  = URI.create(renderUrl.replace("postgres://", "postgresql://"));
                 String host = uri.getHost();
@@ -55,12 +57,12 @@ public class DataSourceConfig {
                 cfg.setPassword(pass);
 
             } catch (Exception e) {
-                throw new RuntimeException("❌ Could not parse DATABASE_URL: " + renderUrl, e);
+                throw new RuntimeException("❌ Failed to parse DATABASE_URL: " + renderUrl, e);
             }
 
         } else if (!localUrl.isBlank()) {
             // ── Local MySQL ──────────────────────────────────────────
-            log.info("🗄️  LOCAL mode — connecting via spring.datasource.url");
+            log.info("🗄️  LOCAL mode — MySQL via spring.datasource.url");
             cfg.setJdbcUrl(localUrl);
             cfg.setUsername(localUser);
             cfg.setPassword(localPass);
@@ -68,9 +70,7 @@ public class DataSourceConfig {
 
         } else {
             throw new RuntimeException(
-                "❌ No database config found.\n" +
-                "  → Render: set DATABASE_URL env var\n" +
-                "  → Local:  set spring.datasource.url");
+                "❌ No DB config found. Set DATABASE_URL (Render) or spring.datasource.url (local).");
         }
 
         return new HikariDataSource(cfg);
